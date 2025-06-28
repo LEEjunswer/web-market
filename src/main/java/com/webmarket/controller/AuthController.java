@@ -58,6 +58,7 @@ public class AuthController {
             if (type.equals("app")) {
                 log.info("앱 로그인 성공");
                 LocalDateTime expiration = LocalDateTime.now().plusDays(7);
+                memberService.updateFcmToken(loginAuthRequestDTO.getEmail(),loginAuthRequestDTO.getFcmToken());
                 memberService.updateRefreshToken(member.get().getEmail(), refreshToken, expiration);
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + accessToken)
