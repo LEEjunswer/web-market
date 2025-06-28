@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Setter
@@ -72,22 +73,28 @@ public class Member {
     @Comment("회원 권한")
     @Column(nullable = false)
     private MemberRole role;
-
+    
     @Enumerated(EnumType.STRING)
     @Comment("회원 등급")
     @Column(nullable = false)
     private MemberGrade grade;
 
-    @Comment("회원가입 일자")
-    @NotNull(message = "회원가입일자는 널이 될 수 없습니다")
+    @Comment("주소 동까지만 표현할 예정 앱같은 경우 내위치 기반으로 계속 업데이트")
     @Column(nullable = false)
-    private LocalDate createTime;
+    private String address;
 
     @Comment("유저 프로필")
     private String profile;
 
     @Comment("회원탈퇴 유무 false 면 미탈퇴")
     private boolean isDeleted = false;
+    @Comment("회원가입 일자")
+    @NotNull(message = "회원가입일자는 널이 될 수 없습니다")
+    @Column(nullable = false)
+    private LocalDate createTime;
+
+    @Comment("마지막 접속일")
+    private LocalDateTime lastLoginTime = LocalDateTime.now();
 
     @Comment("회원탈퇴일자")
     private String deleteTime;

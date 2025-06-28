@@ -14,7 +14,17 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByEmail(String email);
+    Optional<Member> findByNick(String nick);
+    Optional<Member> findByEmailAndPassword(String email,String password);
 
+    @Query("SELECT m FROM RefreshToken rt JOIN rt.member m WHERE rt.token = :token AND m.email = :email")
+    Optional<Member> findByTokenAndEmail(@Param("token") String token, @Param("email") String email);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE FcmToken ft SET ft.fcm = :fcmToken WHERE ft.member.email = :email")
+    int updateFcmTokenByEmail(@Param("email") String email, @Param("fcmToken") String fcmToken);
 
     @Modifying
     @Transactional

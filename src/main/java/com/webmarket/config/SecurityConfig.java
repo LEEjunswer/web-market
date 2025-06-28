@@ -30,6 +30,8 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/member/validCheckEmail",
                                 "/member/insertMember",
+                                "/member/validCheckNick",
+                                "/member/insertSocialMember",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
