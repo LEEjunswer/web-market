@@ -10,13 +10,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-
+import java.util.Date;
+import java.util.List;
 @Component
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -36,12 +41,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (accessToken != null) {
             try {
-
                 String email = jwtUtil.getMemberIdFromToken(accessToken);
+                String role = jwtUtil.getRoleFromToken(accessToken);
                 Member member = memberService.getMemberByEmail(email);
 
+                GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(member, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(member, null, List.of(authority));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 chain.doFilter(request, response);
@@ -51,27 +57,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.error("액세스 토큰 검증 실패: {}", e.getMessage());
             }
         }
+
         if (refreshToken != null) {
             try {
                 String email = jwtUtil.getMemberIdFromToken(refreshToken);
-                log.info("🔑 파싱된 이메일: {}", email);
+                log.info(" 파싱된 이메일: {}", email);
 
                 Member member = memberService.getMemberByEmail(email);
                 if (member == null) {
-                    log.error("❌ 이메일은 있으나 해당 유저가 DB에 없음: {}", email);
+                    log.error("이메일은 있으나 해당 유저가 DB에 없음: {}", email);
                     throw new RuntimeException("회원 없음");
                 }
 
-                String newAccessToken = JwtUtil.generateAccessToken(email);
+                String role = member.getRole().name();
+
+                String newAccessToken = JwtUtil.generateAccessToken(email, role);
                 String newRefreshToken = JwtUtil.generateRefreshToken(email);
 
-                memberService.updateRefreshToken(email, newRefreshToken);
+                Date expirationDate = JwtUtil.getRefreshTokenExpiration(email);
+                LocalDateTime expiration = expirationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                memberService.updateRefreshToken(email, newRefreshToken,expiration);
+
 
                 response.setHeader("Authorization", "Bearer " + newAccessToken);
                 response.setHeader("Refresh-Token", "Bearer " + newRefreshToken);
 
+                GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(member, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(member, null, List.of(authority));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 chain.doFilter(request, response);
@@ -90,9 +104,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader(headerName);
         return (token != null && token.startsWith("Bearer ")) ? token.substring(7) : null;
     }
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/games/ws/");
+        return path.startsWith("/chat/ws/");
     }
 }

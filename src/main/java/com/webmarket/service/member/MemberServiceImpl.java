@@ -4,11 +4,13 @@ import com.webmarket.dto.request.auth.LoginAuthRequestDTO;
 import com.webmarket.dto.request.auth.SocialLoginAuthRequestDTO;
 import com.webmarket.dto.request.member.InsertMemberRequestDTO;
 import com.webmarket.dto.request.member.InsertSocialMemberRequestDTO;
+import com.webmarket.dto.request.member.UpdateMemberRequestDTO;
 import com.webmarket.entitiy.FcmToken;
 import com.webmarket.entitiy.Member;
 import com.webmarket.entitiy.RefreshToken;
 import com.webmarket.mapper.MemberMapper;
 import com.webmarket.repository.fcm.FcmTokenRepository;
+import com.webmarket.repository.member.MemberCustomRepository;
 import com.webmarket.repository.member.MemberRepository;
 import com.webmarket.repository.refresh.RefreshTokenRepository;
 import com.webmarket.util.passwordEncoder.Sha256PasswordEncoderWithSalt;
@@ -31,6 +33,7 @@ public class MemberServiceImpl implements MemberService {
     private final Sha256PasswordEncoderWithSalt passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final FcmTokenRepository fcmTokenRepository;
+    private final MemberCustomRepository memberCustomRepository;
 
     @Override
     @Transactional
@@ -130,5 +133,15 @@ public class MemberServiceImpl implements MemberService {
                     .body("이미 사용 중인 닉네임입니다.");
         }
         return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+    }
+
+    @Override
+    public int updateMember(UpdateMemberRequestDTO updateMemberRequestDTO) {
+        return memberCustomRepository.updateMember(updateMemberRequestDTO);
+    }
+
+    @Override
+    public int updateLastLoginTime(Long id, LocalDateTime localDateTime) {
+        return memberRepository.updateLastLoginTime(id,localDateTime);
     }
 }

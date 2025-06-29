@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
@@ -29,7 +28,7 @@ public class Member {
     @Comment("회원 이메일")
     @NotNull(message = "null이 들어올 수 없습나다")
     @NotBlank(message = "공백 불가")
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false,unique = true,updatable = false)
     private String email;
 
 
@@ -51,13 +50,13 @@ public class Member {
     @Comment("유저 이름")
     @NotNull(message = "이름은 null 존재 x")
     @NotBlank(message = "이름은 공백 불가")
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     private String name;
 
     @Comment("생년월일")
     @NotNull(message = "생년월일은 필수입니다.")
     @NotBlank(message = "생년월일은 공백이 들어올 수 없습니다")
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "생년월일 형식은 yyyy-MM-dd여야 합니다.")
     private String birth;
 
@@ -81,16 +80,19 @@ public class Member {
 
     @Comment("주소 동까지만 표현할 예정 앱같은 경우 내위치 기반으로 계속 업데이트")
     @Column(nullable = false)
+    @NotNull(message = "주소는 널이 들어올 수 없습니다")
     private String address;
 
     @Comment("유저 프로필")
     private String profile;
 
     @Comment("회원탈퇴 유무 false 면 미탈퇴")
-    private boolean isDeleted = false;
+    @Column(columnDefinition = "false")
+    private boolean isDeleted;
+
     @Comment("회원가입 일자")
     @NotNull(message = "회원가입일자는 널이 될 수 없습니다")
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     private LocalDate createTime;
 
     @Comment("마지막 접속일")

@@ -1,9 +1,6 @@
 package com.webmarket.controller;
 
-import com.webmarket.dto.request.member.InsertMemberRequestDTO;
-import com.webmarket.dto.request.member.InsertSocialMemberRequestDTO;
-import com.webmarket.dto.request.member.ValidCheckEmailRequestDTO;
-import com.webmarket.dto.request.member.ValidCheckNickRequestDTO;
+import com.webmarket.dto.request.member.*;
 import com.webmarket.dto.response.social.KakaoResponse;
 import com.webmarket.dto.response.social.NaverResponse;
 import com.webmarket.entitiy.Member;
@@ -24,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -60,13 +59,13 @@ public class MemberController {
     public ResponseEntity<?> validCheckNick(@Valid @RequestBody ValidCheckNickRequestDTO validCheckNickRequestDTO) {
         log.info("===================== validCheckNick START==================================");
         System.out.println("validCheckNick  = " + validCheckNickRequestDTO);
-        return memberService.checkEmailDuplication(validCheckNickRequestDTO.getNick());
+        return memberService.checkNickDuplication(validCheckNickRequestDTO.getNick());
     }
 
 
     @Operation(summary = "일반 회원가입" , description = "일반 회원가입")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원가입 성공",content = @Content(schema = @Schema(implementation = Integer.class))),
+            @ApiResponse(responseCode = "201", description = "회원가입 성공",content = @Content(schema = @Schema(implementation = Integer.class))),
             @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
     })
     @PostMapping("insertMember")
@@ -95,7 +94,7 @@ public class MemberController {
 
     @Operation(summary = "소셜 회원가입" , description = "소셜 회원가입")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원가입 성공",content = @Content(schema = @Schema(implementation = Integer.class))),
+            @ApiResponse(responseCode = "201", description = "회원가입 성공",content = @Content(schema = @Schema(implementation = Integer.class))),
             @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
             @ApiResponse(responseCode = "400" ,description = "소셜 인증 에러",content =  @Content(schema = @Schema(implementation =  Exception.class)))
     })
@@ -140,6 +139,39 @@ public class MemberController {
         }
         log.error("잘못된 접근");
         log.info("===================== insertSocialMember Error==================================");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 회원가입 실패");
+    }
+    @Operation(summary = "회원 수정" , description = "회원 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원가입 성공",content = @Content(schema = @Schema(implementation = Integer.class))),
+            @ApiResponse(responseCode = "401",description = "인증 에러",content =  @Content(schema = @Schema(implementation = Exception.class))),
+            @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    @PostMapping("updateMember")
+    public ResponseEntity<?> updateMember(@RequestHeader("Authorization") String accessToken, @Valid @RequestBody UpdateMemberRequestDTO updateMemberRequestDTO) {
+        log.info("===================== updateMember START==================================");
+        System.out.println("updateMemberRequestDTO = " + updateMemberRequestDTO);
+        String access = accessToken.replace("Bearer", "");
+        String email = JwtUtil.getMemberIdFromToken(access);
+        if(Objects.requireNonNull(email).isEmpty()){
+            log.error("회원정보 수정 실패");
+            log.warn("유효하지 않는 토큰");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않는 토큰");
+        }
+        Member member = memberService.getMemberByEmail(email);
+        if(!member.getEmail().equals(updateMemberRequestDTO.getEmail())){
+            log.error("회원정보 수정 실패");
+            log.warn("유효하지 않는 토큰");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일과 토큰 이메일이 일치 X");
+        }
+        int check =  memberService.updateMember(updateMemberRequestDTO);
+        if(check > 0){
+          log.info("회원가입 수정 완료");
+            log.info("===================== updateMember END==================================");
+            return ResponseEntity.status(HttpStatus.OK).body("회원 수정 완료");
+        }
+        log.error("회원 수정 실패");
+        log.info("===================== updateMember END==================================");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 회원가입 실패");
     }
 }

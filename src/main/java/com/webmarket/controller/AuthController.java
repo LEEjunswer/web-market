@@ -51,10 +51,12 @@ public class AuthController {
         Optional<Member> member = memberService.login(loginAuthRequestDTO);
 
         if (member.isPresent()) {
-            String token = jwtUtil.generateToken(member.get().getEmail());
-            String refreshToken = jwtUtil.generateRefreshToken(member.get().getEmail());
-            String accessToken = jwtUtil.generateAccessToken(member.get().getEmail());
-
+            String email = member.get().getEmail();
+            String role = member.get().getRole().name();
+            String refreshToken = jwtUtil.generateRefreshToken(email);
+            String accessToken = jwtUtil.generateAccessToken(email, role);
+            LocalDateTime localDateTime = LocalDateTime.now();
+            memberService.updateLastLoginTime(member.get().getId(), localDateTime);
             if (type.equals("app")) {
                 log.info("앱 로그인 성공");
                 LocalDateTime expiration = LocalDateTime.now().plusDays(7);
@@ -79,7 +81,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일 또는 비밀번호");
     }
 
-    @Operation(summary = "일반 이메일 로그인", description = "일반 이메일 로그인")
+    @Operation(summary = "소셜 로그인", description = "소셜 로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = JwtUtil.class))),
             @ApiResponse(responseCode = "401", description = "아이디 또는 비밀번호 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
@@ -92,9 +94,12 @@ public class AuthController {
         Optional<Member> member = memberService.socialLogin(socialLoginAuthRequestDTO);
 
         if (member.isPresent()) {
-            String token = jwtUtil.generateToken(member.get().getEmail());
-            String refreshToken = jwtUtil.generateRefreshToken(member.get().getEmail());
-            String accessToken = jwtUtil.generateAccessToken(member.get().getEmail());
+            String email = member.get().getEmail();
+            String role = member.get().getRole().name();
+            String refreshToken = jwtUtil.generateRefreshToken(email);
+            String accessToken = jwtUtil.generateAccessToken(email, role);
+            LocalDateTime localDateTime = LocalDateTime.now();
+            memberService.updateLastLoginTime(member.get().getId(), localDateTime);
             Long changeEmail = Long.valueOf(socialLoginAuthRequestDTO.getEmail());
             if (type.equals("app")) {
                 if(sns.equals("kakao")){
@@ -141,6 +146,37 @@ public class AuthController {
 
         log.warn("로그인 실패: 엑세스 토큰 or id 실패");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 엑세스토큰 or id");
+    }
+
+    @Operation(summary = "엑세스 토큰 만료시 재발급", description = "리프레시 토큰으로 엑세스 토큰만 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "재발급 성공"),
+            @ApiResponse(responseCode = "401", description = "RefreshToken 만료됨", content = @Content(schema = @Schema(implementation = Exception.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(schema = @Schema(implementation = Exception.class)))
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(@RequestHeader("Refresh-Token") String refreshToken) {
+        log.info("=====================  AccessToken 재발급 START =========================");
+        if (jwtUtil.isTokenExpired(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("RefreshToken 만료됨. 다시 로그인하세요.");
+        }
+
+        String email = jwtUtil.getMemberIdFromToken(refreshToken);
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 RefreshToken입니다.");
+        }
+
+        Member member = memberService.getMemberByEmail(email);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("해당 이메일의 회원이 존재하지 않습니다.");
+        }
+
+        String role = member.getRole().name();
+        String newAccessToken = JwtUtil.generateAccessToken(email, role);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + newAccessToken)
+                .body("AccessToken 재발급 완료");
     }
 }
 

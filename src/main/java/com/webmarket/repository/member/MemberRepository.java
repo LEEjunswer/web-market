@@ -26,6 +26,14 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("UPDATE FcmToken ft SET ft.fcm = :fcmToken WHERE ft.member.email = :email")
     int updateFcmTokenByEmail(@Param("email") String email, @Param("fcmToken") String fcmToken);
 
+
+
+    /*jpa는 member m 을 계속 줘야 한다 ibatis 랑 다름  */
+    @Modifying
+    @Transactional
+    @Query("update Member m set m.lastLoginTime = :lastLoginTime where m.id = :id")
+    int updateLastLoginTime(@Param("id") Long id, @Param("lastLoginTime") LocalDateTime lastLoginTime);
+
     @Modifying
     @Transactional
     @Query("UPDATE RefreshToken rt SET rt.token = :token, rt.expiration = :expiration WHERE rt.member.email = :email")
