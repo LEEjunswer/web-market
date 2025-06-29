@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Member {
 
     @Id
-    @Comment("고유 ID")
+    @Comment("회원 고유 ID")
     @NotNull(message = "null이 들어올 수 없습나다")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id" ,nullable = false)
