@@ -55,7 +55,7 @@ public class InsertSocialMemberRequestDTO {
     @Comment("주소")
     @NotNull(message = "주소는 널이 들어올 수 없습니다")
     private String address;
-
+    
 
     /*회원가입시 디폴트 유저로 가입*/
     private MemberRole role = MemberRole.USER;

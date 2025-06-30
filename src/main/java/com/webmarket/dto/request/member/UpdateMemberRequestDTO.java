@@ -24,6 +24,7 @@ public class UpdateMemberRequestDTO {
 
     @Comment("닉네임")
     @NotBlank(message = "닉네임은 공백이 들어올 수 럾습니다")
+    private  String nick;
 
     @Comment("프로필")
     private String profile;
