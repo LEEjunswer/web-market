@@ -87,8 +87,7 @@ public class Member {
     private String profile;
 
     @Comment("회원탈퇴 유무 false 면 미탈퇴")
-    @Column(columnDefinition = "false")
-    private boolean isDeleted;
+    private boolean isDeleted =false;
 
     @Comment("회원가입 일자")
     @NotNull(message = "회원가입일자는 널이 될 수 없습니다")

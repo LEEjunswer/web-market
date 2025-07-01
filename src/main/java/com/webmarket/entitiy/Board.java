@@ -49,6 +49,5 @@ public class Board {
     private LocalDateTime deleteTime;
 
     @Comment("삭제를 했는가?")
-    @Column(columnDefinition = "false")
-    private boolean isDelete;
+    private boolean isDelete = false;
 }

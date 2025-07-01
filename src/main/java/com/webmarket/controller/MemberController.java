@@ -55,7 +55,7 @@ public class MemberController {
             @ApiResponse(responseCode = "409",description = "이미 닉네임이 존재",content =  @Content(schema = @Schema(implementation = Exception.class))),
             @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
     })
-    @PostMapping("validCheckEmail")
+    @PostMapping("validCheckNick")
     public ResponseEntity<?> validCheckNick(@Valid @RequestBody ValidCheckNickRequestDTO validCheckNickRequestDTO) {
         log.info("===================== validCheckNick START==================================");
         System.out.println("validCheckNick  = " + validCheckNickRequestDTO);

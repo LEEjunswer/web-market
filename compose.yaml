@@ -1,10 +1,31 @@
+version: '3.8'
+
 services:
   mysql:
-    image: 'mysql:latest'
+    image: mysql:latest
+    container_name: web-market-mysql
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      - MYSQL_DATABASE=web_market
+      - MYSQL_ROOT_PASSWORD= #your password
     ports:
-      - '3306'
+      - '3307:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+  app:
+    image: web-market-app
+    container_name: web-market-app
+    depends_on:
+      - mysql
+    ports:
+      - "8087:8087"   # Spring Boot 기본 포트, 변경했으면 맞게 수정
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/web_market?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD= #your_password
+      - SPRING_PROFILES_ACTIVE=docker
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
