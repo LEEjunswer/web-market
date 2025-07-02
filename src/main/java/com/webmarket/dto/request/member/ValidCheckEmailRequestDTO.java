@@ -8,9 +8,9 @@ import org.hibernate.annotations.Comment;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ValidCheckEmailRequestDTO {
 
     @NotNull(message = "이메일은 널이 될 수 없습니다")
