@@ -19,7 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +51,6 @@ public class AuthController {
         log.info("===================== login START==================================");
         log.info("loginAuthRequestDTO  = {}", loginAuthRequestDTO);
         Optional<Member> member = memberService.login(loginAuthRequestDTO);
-
         if (member.isPresent()) {
             String email = member.get().getEmail();
             String role = member.get().getRole().name();
@@ -68,11 +69,25 @@ public class AuthController {
                         .body("로그인 성공");
             } else if (type.equals("web")) {
                 log.info("웹 로그인 성공");
-                LocalDateTime expiration = LocalDateTime.now().plusDays(7);
-                memberService.updateRefreshToken(member.get().getEmail(), refreshToken, expiration);
+                ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", "Bearer " + accessToken)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(60 * 60 * 24 * 7)
+                        .sameSite("Strict")
+                        .build();
+
+                ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(60 * 60 * 24 * 7)
+                        .sameSite("Strict")
+                        .build();
+
                 return ResponseEntity.ok()
-                        .header("Authorization", "Bearer " + accessToken)
-                        .header("Refresh-Token", refreshToken)
+                        .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                        .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                         .body("로그인 성공");
             }
         }
@@ -134,12 +149,61 @@ public class AuthController {
                             .body("로그인 성공");
                 }
             } else if (type.equals("web")) {
+                if(sns.equals("kakao")){
+                    KakaoResponse kakaoResponse = kakaoService.getKakaoUserCheck(socialLoginAuthRequestDTO.getEmail(),changeEmail);
+                    if (kakaoResponse == null) {
+                        log.error("카카오 검증 실패");
+                        log.warn("===================== socialLogin Error==================================");
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("카카오 검증 실패");
+                    }
+                    log.info("웹 로그인 성공");
+                    ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", "Bearer " + accessToken)
+                            .httpOnly(true)
+                            .secure(true)
+                            .path("/")
+                            .maxAge(60 * 60 * 24 * 7)
+                            .sameSite("Strict")
+                            .build();
+
+                    ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                            .httpOnly(true)
+                            .secure(true)
+                            .path("/")
+                            .maxAge(60 * 60 * 24 * 7)
+                            .sameSite("Strict")
+                            .build();
+
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                            .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                            .body("로그인 성공");
+                }}else if(sns.equals("naver")){
+                NaverResponse naverResponse = naverService.getNaverUserCheck(socialLoginAuthRequestDTO.getEmail(),changeEmail);
+                if (naverResponse == null) {
+                    log.error("네이버 검증 실패");
+                    log.info("===================== socialLogin Error==================================");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("네이버 검증 실패");
+                }
                 log.info("웹 로그인 성공");
-                LocalDateTime expiration = LocalDateTime.now().plusDays(7);
-                memberService.updateRefreshToken(member.get().getEmail(), refreshToken, expiration);
+                ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", "Bearer " + accessToken)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(60 * 60 * 24 * 7)
+                        .sameSite("Strict")
+                        .build();
+
+                ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/")
+                        .maxAge(60 * 60 * 24 * 7)
+                        .sameSite("Strict")
+                        .build();
+
                 return ResponseEntity.ok()
-                        .header("Authorization", "Bearer " + accessToken)
-                        .header("Refresh-Token", refreshToken)
+                        .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                        .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                         .body("로그인 성공");
             }
         }
