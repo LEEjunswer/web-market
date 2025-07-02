@@ -3,12 +3,12 @@ package com.webmarket.dto.request.member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class ValidCheckEmailRequestDTO {

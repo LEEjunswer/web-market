@@ -38,8 +38,8 @@ public class MemberController {
 
     @Operation(summary = "이메일 유효검사" , description = "이메일 유효검사")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이메일 존재x",content = @Content(schema = @Schema(implementation = Integer.class))),
-            @ApiResponse(responseCode = "409",description = "이미 이메일이 존재",content =  @Content(schema = @Schema(implementation = Exception.class))),
+            @ApiResponse(responseCode = "200", description = "이메일 존재x",content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "409",description = "이미 이메일이 존재",content =  @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
     })
     @PostMapping("validCheckEmail")
@@ -51,8 +51,8 @@ public class MemberController {
 
     @Operation(summary = "닉네임 유효검사" , description = "닉네임 유효검사")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "닉네임 존재x",content = @Content(schema = @Schema(implementation = Integer.class))),
-            @ApiResponse(responseCode = "409",description = "이미 닉네임이 존재",content =  @Content(schema = @Schema(implementation = Exception.class))),
+            @ApiResponse(responseCode = "200", description = "닉네임 존재x",content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "409",description = "이미 닉네임이 존재",content =  @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "500",description = "서버 오류",content =  @Content(schema = @Schema(implementation = Exception.class))),
     })
     @PostMapping("validCheckNick")
