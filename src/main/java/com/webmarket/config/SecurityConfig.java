@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/login",
+                                "/auth/socialLogin",
                                 "/member/validCheckEmail",
                                 "/member/insertMember",
                                 "/member/validCheckNick",
