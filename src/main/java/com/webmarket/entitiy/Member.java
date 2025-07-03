@@ -40,11 +40,6 @@ public class Member {
 
 
     @Comment("이메일 가입시에만 비밀번호 필요")
-    @NotNull(message = "비밀번호 null 존재 x")
-    @NotBlank(message = "비밀번호 공백 불가")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$",
-            message = "비밀번호는 최소 8자 이상이어야 하며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.")
-    @Column(nullable = false)
     private String password;
 
     @Comment("유저 이름")
@@ -92,7 +87,7 @@ public class Member {
     @Comment("회원가입 일자")
     @NotNull(message = "회원가입일자는 널이 될 수 없습니다")
     @Column(nullable = false,updatable = false)
-    private LocalDate createTime;
+    private LocalDateTime createTime;
 
     @Comment("마지막 접속일")
     private LocalDateTime lastLoginTime = LocalDateTime.now();
@@ -104,7 +99,7 @@ public class Member {
     @PrePersist
     public void prePersist() {
         if (this.createTime == null) {
-            this.createTime = LocalDate.now();
+            this.createTime = LocalDateTime.now();
         }
     }
 }

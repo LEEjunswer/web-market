@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -50,4 +51,14 @@ public class Board {
 
     @Comment("삭제를 했는가?")
     private boolean isDelete = false;
+
+    @Comment("게시글 조회수")
+    private int boardView =0;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createTime == null) {
+            this.createTime = LocalDateTime.now();
+        }
+    }
 }
