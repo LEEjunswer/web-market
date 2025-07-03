@@ -25,12 +25,12 @@ public class BoardComment {
 
     @Comment("게시글 번호 외래키")
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "board_id",nullable = false)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
     @Comment("작성자, 외래키")
     @ManyToOne(fetch =  FetchType.LAZY)
-    @Column(name = "member_id",nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Comment("댓글 내용")
