@@ -1,5 +1,5 @@
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/web_market?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: your_id
-    password: your_password
+    username: root
+    password: 1120rorn!!

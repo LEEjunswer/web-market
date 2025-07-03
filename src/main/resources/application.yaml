@@ -2,10 +2,13 @@ server:
   port: 8087
 
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   datasource:
     url: jdbc:mysql://localhost:3306/web_market?useSSL=false&serverTimezone=UTC
-    username: sql아이디
-    password: sql비밀번호
+    username: root
+    password: 1120rorn!!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -21,8 +24,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: "your_key"  # 네이버 클라이언트 설정
-            client-secret: "your_key"  # 네이버 클라이언트 설정
+            client-id: "1"
+            client-secret: "1"
             client-name: Kakao
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -30,8 +33,8 @@ spring:
               - profile_nickname
               - account_email
           naver:
-            client-id: "your_key" # 네이버 클라이언트 설정
-            client-secret: "your_key"  # 네이버 클라이언트 설정
+            client-id: "1"
+            client-secret: "1 "
             client-name: Naver
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -55,3 +58,4 @@ logging:
   level:
     root: INFO
     org.springframework.web: DEBUG
+    org.springframework.http.converter.json: DEBUG

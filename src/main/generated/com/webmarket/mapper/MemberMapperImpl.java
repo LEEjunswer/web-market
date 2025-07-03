@@ -4,12 +4,14 @@ import com.webmarket.dto.request.member.InsertMemberRequestDTO;
 import com.webmarket.dto.request.member.InsertSocialMemberRequestDTO;
 import com.webmarket.entitiy.Member;
 import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-29T16:01:56+0900",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.2.jar, environment: Java 17.0.10 (Oracle Corporation)"
+    date = "2025-07-01T15:43:12+0900",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.2.jar, environment: Java 17.0.12 (Oracle Corporation)"
 )
+@Component
 public class MemberMapperImpl implements MemberMapper {
 
     @Override

@@ -6,7 +6,7 @@ services:
     container_name: web-market-mysql
     environment:
       - MYSQL_DATABASE=web_market
-      - MYSQL_ROOT_PASSWORD= #your password
+      - MYSQL_ROOT_PASSWORD=1120rorn!!
     ports:
       - '3307:3306'
     volumes:
@@ -23,7 +23,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/web_market?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD= #your_password
+      - SPRING_DATASOURCE_PASSWORD=1120rorn!!
       - SPRING_PROFILES_ACTIVE=docker
     restart: unless-stopped
 
