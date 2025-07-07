@@ -24,12 +24,10 @@ public class RefreshToken {
 
 
     @Comment("JWT 리프레쉬 토큰")
-    @Column(nullable = false,unique = true)
     private String token;
 
 
     @Comment("리프레시토큰 만료 날짜")
-    @Column(nullable = false)
     private LocalDateTime expiration;
 
 }
