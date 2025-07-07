@@ -5,6 +5,7 @@ import com.webmarket.service.member.MemberService;
 import com.webmarket.util.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 @Component
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -100,9 +101,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request, String headerName) {
-        String token = request.getHeader(headerName);
-        return (token != null && token.startsWith("Bearer ")) ? token.substring(7) : null;
+    private String resolveToken(HttpServletRequest request, String name) {
+
+
+        String token = request.getHeader(name);
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (name.equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    if (token.startsWith("Bearer ")) {
+                        return token.substring(7);
+                    } else {
+                        return token;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
