@@ -101,7 +101,7 @@ public class MemberController {
     @PostMapping("insertSocialMember")
     public ResponseEntity<?> insertSocialMember(@RequestBody InsertSocialMemberRequestDTO insertMemberDto,@RequestParam String type) {
         log.info("===================== insertSocialMember START==================================");
-        System.out.println("insertMemberDto = " + insertMemberDto);
+        log.info("insertMemberDto = " + insertMemberDto);
         Long changeEmail = Long.valueOf(insertMemberDto.getEmail());
         if(type.equals("kakao")) {
             KakaoResponse kakaoResponse = kakaoService.getKakaoUserCheck(insertMemberDto.getAccessToken(), changeEmail);
@@ -112,7 +112,7 @@ public class MemberController {
             }
             Member check = memberService.socialSave(insertMemberDto);
             if (check != null) {
-                log.error("서버 오류");
+                log.info("회원가입 성공");
                 log.info("===================== insertSocialMember Success==================================");
                 return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공");
             }
