@@ -68,12 +68,12 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("이미 가입된 이메일입니다.");
         }
         Member savedMember = memberRepository.save(member);
-        RefreshToken refreshToken = new RefreshToken();
+    /*    RefreshToken refreshToken = new RefreshToken();
         refreshToken.setMember(savedMember);
         refreshTokenRepository.save(refreshToken);
         FcmToken fcmToken = new FcmToken();
         fcmToken.setMember(savedMember);
-        fcmTokenRepository.save(fcmToken);
+        fcmTokenRepository.save(fcmToken);*/
         return savedMember;
     }
 
