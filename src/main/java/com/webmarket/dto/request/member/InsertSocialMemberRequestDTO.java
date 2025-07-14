@@ -9,11 +9,13 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class InsertSocialMemberRequestDTO {
 
     @Comment("회원 이메일")

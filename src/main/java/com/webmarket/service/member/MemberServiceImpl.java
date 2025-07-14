@@ -62,6 +62,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public Member socialSave(InsertSocialMemberRequestDTO insertSocialMemberRequestDTO) {
+
+
         Member member = memberMapper.toEntityFromInsertSocialDTO(insertSocialMemberRequestDTO);
         Optional<Member> existingMember = memberRepository.findByEmail(member.getEmail());
         if (existingMember.isPresent()) {

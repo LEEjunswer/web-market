@@ -23,7 +23,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath birth = createString("birth");
 
-    public final DatePath<java.time.LocalDate> createTime = createDate("createTime", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> createTime = createDateTime("createTime", java.time.LocalDateTime.class);
 
     public final StringPath deleteTime = createString("deleteTime");
 

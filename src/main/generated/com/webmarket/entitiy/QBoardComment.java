@@ -11,51 +11,48 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QBoard is a Querydsl query type for Board
+ * QBoardComment is a Querydsl query type for BoardComment
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QBoard extends EntityPathBase<Board> {
+public class QBoardComment extends EntityPathBase<BoardComment> {
 
-    private static final long serialVersionUID = 861417363L;
+    private static final long serialVersionUID = 1930443596L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QBoard board = new QBoard("board");
+    public static final QBoardComment boardComment = new QBoardComment("boardComment");
 
-    public final NumberPath<Integer> boardView = createNumber("boardView", Integer.class);
+    public final QBoard board;
 
-    public final StringPath content = createString("content");
+    public final StringPath comment = createString("comment");
 
     public final DateTimePath<java.time.LocalDateTime> createTime = createDateTime("createTime", java.time.LocalDateTime.class);
 
-    public final DateTimePath<java.time.LocalDateTime> deleteTime = createDateTime("deleteTime", java.time.LocalDateTime.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isDelete = createBoolean("isDelete");
+    public final BooleanPath IsDelete = createBoolean("IsDelete");
 
     public final QMember member;
 
-    public final StringPath title = createString("title");
-
-    public QBoard(String variable) {
-        this(Board.class, forVariable(variable), INITS);
+    public QBoardComment(String variable) {
+        this(BoardComment.class, forVariable(variable), INITS);
     }
 
-    public QBoard(Path<? extends Board> path) {
+    public QBoardComment(Path<? extends BoardComment> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QBoard(PathMetadata metadata) {
+    public QBoardComment(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QBoard(PathMetadata metadata, PathInits inits) {
-        this(Board.class, metadata, inits);
+    public QBoardComment(PathMetadata metadata, PathInits inits) {
+        this(BoardComment.class, metadata, inits);
     }
 
-    public QBoard(Class<? extends Board> type, PathMetadata metadata, PathInits inits) {
+    public QBoardComment(Class<? extends BoardComment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.board = inits.isInitialized("board") ? new QBoard(forProperty("board"), inits.get("board")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 

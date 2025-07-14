@@ -101,7 +101,7 @@ public class MemberController {
     @PostMapping("insertSocialMember")
     public ResponseEntity<?> insertSocialMember(@RequestBody InsertSocialMemberRequestDTO insertMemberDto,@RequestParam String type) {
         log.info("===================== insertSocialMember START==================================");
-        log.info("insertMemberDto = " + insertMemberDto);
+        log.info("✅ 소셜 회원확인 : memberId = {} kakao = {}", insertMemberDto ,type);
         Long changeEmail = Long.valueOf(insertMemberDto.getEmail());
         if(type.equals("kakao")) {
             KakaoResponse kakaoResponse = kakaoService.getKakaoUserCheck(insertMemberDto.getAccessToken(), changeEmail);

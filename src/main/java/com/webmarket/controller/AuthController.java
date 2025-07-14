@@ -149,15 +149,18 @@ public class AuthController {
                             .body("로그인 성공");
                 }
             } else if (type.equals("web")) {
+                log.info("진입 확인1");
                 if(sns.equals("kakao")){
-                    KakaoResponse kakaoResponse = kakaoService.getKakaoUserCheck(socialLoginAuthRequestDTO.getEmail(),changeEmail);
+                    log.info("진입2");
+                    KakaoResponse kakaoResponse = kakaoService.getKakaoUserCheck(socialLoginAuthRequestDTO.getAccessToken(),changeEmail);
+
                     if (kakaoResponse == null) {
                         log.error("카카오 검증 실패");
                         log.warn("===================== socialLogin Error==================================");
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("카카오 검증 실패");
                     }
                     log.info("웹 로그인 성공");
-                    ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", "Bearer " + accessToken)
+                    ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", accessToken)
                             .httpOnly(true)
                             .secure(true)
                             .path("/")
@@ -174,8 +177,10 @@ public class AuthController {
                             .build();
 
                     return ResponseEntity.ok()
-                            .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
-                            .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                            .headers(headers -> {
+                                headers.add(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+                                headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+                            })
                             .body("로그인 성공");
                 }}else if(sns.equals("naver")){
                 NaverResponse naverResponse = naverService.getNaverUserCheck(socialLoginAuthRequestDTO.getEmail(),changeEmail);
