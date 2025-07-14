@@ -94,6 +94,10 @@ public class Member {
     @Comment("회원탈퇴일자")
     private String deleteTime;
 
+    @Comment("회원가입 타입형")
+    @NotNull(message = "회원가입 타입형이 널이 될 수 없습니다.")
+    private MemberLoginType loginType;
+
     /*회원가입 자동으로 됨*/
     @PrePersist
     public void prePersist() {

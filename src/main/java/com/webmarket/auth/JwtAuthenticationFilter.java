@@ -101,7 +101,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request, String name) {
+    public static String resolveToken(HttpServletRequest request, String name) {
 
 
         String token = request.getHeader(name);

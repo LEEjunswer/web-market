@@ -17,7 +17,7 @@ public interface MemberService {
     Member save(InsertMemberRequestDTO memberRequestDTO);
 
     /*sns 회원가입*/
-    Member socialSave(InsertSocialMemberRequestDTO insertSocialMemberRequestDTO);
+    Member socialSave(InsertSocialMemberRequestDTO insertSocialMemberRequestDTO,String type);
 
     int updateRefreshToken(String email, String refreshToken, LocalDateTime expiration);
 

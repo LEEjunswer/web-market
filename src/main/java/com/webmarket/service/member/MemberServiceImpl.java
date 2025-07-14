@@ -7,6 +7,7 @@ import com.webmarket.dto.request.member.InsertSocialMemberRequestDTO;
 import com.webmarket.dto.request.member.UpdateMemberRequestDTO;
 import com.webmarket.entitiy.FcmToken;
 import com.webmarket.entitiy.Member;
+import com.webmarket.entitiy.MemberLoginType;
 import com.webmarket.entitiy.RefreshToken;
 import com.webmarket.mapper.MemberMapper;
 import com.webmarket.repository.fcm.FcmTokenRepository;
@@ -48,6 +49,8 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("이미 가입된 이메일입니다.");
         }
 
+        member.setLoginType(MemberLoginType.LOCAL);
+
         Member savedMember = memberRepository.save(member);
 
         RefreshToken refreshToken = new RefreshToken();
@@ -61,13 +64,18 @@ public class MemberServiceImpl implements MemberService {
     }
     @Override
     @Transactional
-    public Member socialSave(InsertSocialMemberRequestDTO insertSocialMemberRequestDTO) {
+    public Member socialSave(InsertSocialMemberRequestDTO insertSocialMemberRequestDTO,String type) {
 
 
         Member member = memberMapper.toEntityFromInsertSocialDTO(insertSocialMemberRequestDTO);
         Optional<Member> existingMember = memberRepository.findByEmail(member.getEmail());
         if (existingMember.isPresent()) {
             throw new RuntimeException("이미 가입된 이메일입니다.");
+        }
+        if(type.equals("kakao")){
+            member.setLoginType(MemberLoginType.KAKAO);
+        }else if(type.equals("naver")){
+            member.setLoginType(MemberLoginType.NAVER);
         }
         Member savedMember = memberRepository.save(member);
     /*    RefreshToken refreshToken = new RefreshToken();
