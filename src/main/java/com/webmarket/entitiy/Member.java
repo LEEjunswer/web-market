@@ -95,6 +95,8 @@ public class Member {
     private String deleteTime;
 
     @Comment("회원가입 타입형")
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "login_type")
     @NotNull(message = "회원가입 타입형이 널이 될 수 없습니다.")
     private MemberLoginType loginType;
 
